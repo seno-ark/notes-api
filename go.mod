@@ -2,7 +2,10 @@ module notes-api
 
 go 1.21.5
 
-require github.com/stretchr/testify v1.8.4
+require (
+	github.com/oklog/ulid/v2 v2.1.0
+	github.com/stretchr/testify v1.8.4
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
