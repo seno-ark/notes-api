@@ -20,11 +20,11 @@ func (r *noteRepository) UpdateNote(ctx context.Context, payload *entity.Note) (
 	return "", nil
 }
 
-func (r *noteRepository) DeleteNote(ctx context.Context, bookID string) error {
+func (r *noteRepository) DeleteNote(ctx context.Context, noteID string) error {
 	return nil
 }
 
-func (r *noteRepository) GetNote(ctx context.Context, bookID string) (*entity.Note, error) {
+func (r *noteRepository) GetNote(ctx context.Context, noteID string) (*entity.Note, error) {
 	return nil, nil
 }
 
