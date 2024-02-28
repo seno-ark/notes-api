@@ -4,7 +4,6 @@ import (
 	"context"
 	"notes-api/internal"
 	"notes-api/internal/entity"
-	appErr "notes-api/pkg/error"
 )
 
 type noteUsecase struct {
@@ -20,73 +19,39 @@ func NewNoteUsecase(repository internal.NoteRepository) internal.NoteUsecase {
 func (u *noteUsecase) CreateNote(ctx context.Context, payload *entity.Note) (*entity.Note, error) {
 	noteID, err := u.repository.CreateNote(ctx, payload)
 	if err != nil {
-		return nil, appErr.NewErrInternalServer(err.Error())
+		return nil, err
 	}
 
-	note, err := u.repository.GetNote(ctx, noteID)
-	if err != nil {
-		return nil, appErr.NewErrInternalServer(err.Error())
-	}
-
-	return note, nil
+	return u.repository.GetNote(ctx, noteID)
 }
 
 func (u *noteUsecase) UpdateNote(ctx context.Context, payload *entity.Note) (*entity.Note, error) {
 	_, err := u.repository.GetNote(ctx, payload.ID)
 	if err != nil {
-		if appErr.IsErrNotFound(err) {
-			return nil, appErr.NewErrNotFound("note not found")
-		}
-		return nil, appErr.NewErrInternalServer(err.Error())
+		return nil, err
 	}
 
 	noteID, err := u.repository.UpdateNote(ctx, payload)
 	if err != nil {
-		return nil, appErr.NewErrInternalServer(err.Error())
+		return nil, err
 	}
 
-	note, err := u.repository.GetNote(ctx, noteID)
-	if err != nil {
-		return nil, appErr.NewErrInternalServer(err.Error())
-	}
-
-	return note, nil
+	return u.repository.GetNote(ctx, noteID)
 }
 
 func (u *noteUsecase) DeleteNote(ctx context.Context, noteID string) error {
 	_, err := u.repository.GetNote(ctx, noteID)
 	if err != nil {
-		if appErr.IsErrNotFound(err) {
-			return appErr.NewErrNotFound("note not found")
-		}
-		return appErr.NewErrInternalServer(err.Error())
+		return err
 	}
 
-	err = u.repository.DeleteNote(ctx, noteID)
-	if err != nil {
-		return appErr.NewErrInternalServer(err.Error())
-	}
-
-	return nil
+	return u.repository.DeleteNote(ctx, noteID)
 }
 
 func (u *noteUsecase) GetNote(ctx context.Context, noteID string) (*entity.Note, error) {
-	note, err := u.repository.GetNote(ctx, noteID)
-	if err != nil {
-		if appErr.IsErrNotFound(err) {
-			return nil, appErr.NewErrNotFound("note not found")
-		}
-		return nil, appErr.NewErrInternalServer(err.Error())
-	}
-
-	return note, nil
+	return u.repository.GetNote(ctx, noteID)
 }
 
 func (u *noteUsecase) GetNoteList(ctx context.Context, filter *entity.GetNoteListFilter) ([]*entity.Note, int64, error) {
-	notes, total, err := u.repository.GetNoteList(ctx, filter)
-	if err != nil {
-		return nil, total, appErr.NewErrInternalServer(err.Error())
-	}
-
-	return notes, total, nil
+	return u.repository.GetNoteList(ctx, filter)
 }

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"notes-api/internal/entity"
 	"notes-api/internal/mocks"
 	appErr "notes-api/pkg/error"
@@ -47,7 +46,7 @@ func TestCreateNote(t *testing.T) {
 	t.Run("Failed Create Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		errCreateNote := errors.New("failed to create note")
+		errCreateNote := appErr.NewErrInternalServer("failed to create note")
 		mockNoteRepository.On("CreateNote", ctx, payload).Return("", errCreateNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
@@ -98,7 +97,7 @@ func TestUpdateNote(t *testing.T) {
 
 		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
 
-		errUpdateNote := errors.New("failed to update note")
+		errUpdateNote := appErr.NewErrInternalServer("failed to update note")
 		mockNoteRepository.On("UpdateNote", ctx, payload).Return("", errUpdateNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
@@ -112,7 +111,8 @@ func TestUpdateNote(t *testing.T) {
 	t.Run("Update Non Existed Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(nil, appErr.ErrNotFound).Once()
+		errGetNote := appErr.NewErrNotFound("note not found")
+		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
 		createdNote, err := testNoteUsecase.UpdateNote(ctx, payload)
@@ -153,7 +153,7 @@ func TestDeleteNote(t *testing.T) {
 
 		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
 
-		errDeleteNote := errors.New("failed to delete note")
+		errDeleteNote := appErr.NewErrInternalServer("failed to delete note")
 		mockNoteRepository.On("DeleteNote", ctx, id).Return(errDeleteNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
@@ -166,7 +166,8 @@ func TestDeleteNote(t *testing.T) {
 	t.Run("Delete Non Existed Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(nil, appErr.ErrNotFound).Once()
+		errGetNote := appErr.NewErrNotFound("note not found")
+		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
 		err := testNoteUsecase.DeleteNote(ctx, id)
@@ -204,7 +205,7 @@ func TestGetNote(t *testing.T) {
 	t.Run("Failed Get Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		errGetNote := errors.New("failed to get note")
+		errGetNote := appErr.NewErrInternalServer("failed to get note")
 		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
@@ -218,7 +219,8 @@ func TestGetNote(t *testing.T) {
 	t.Run("Get Non Existed Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(nil, appErr.ErrNotFound).Once()
+		errGetNote := appErr.NewErrNotFound("note not found")
+		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
 		note, err := testNoteUsecase.GetNote(ctx, id)
@@ -278,7 +280,7 @@ func TestGetNoteList(t *testing.T) {
 
 		filter := &entity.GetNoteListFilter{}
 
-		errGetNotes := errors.New("failed to get notes")
+		errGetNotes := appErr.NewErrInternalServer("failed to get notes")
 		mockNoteRepository.On("GetNoteList", ctx, filter).Return(nil, int64(0), errGetNotes).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
