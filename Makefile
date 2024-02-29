@@ -1,3 +1,6 @@
+#!make
+include .env
+
 go-build:
 	go build -o bin/api cmd/api/main.go
 
@@ -9,3 +12,14 @@ go-test:
 
 go-mock:
 	mockery --all --dir internal --output internal/mocks
+
+migrate-file:
+	migrate create -ext sql --dir pkg/database/migration -seq $(name)
+
+migrate-up:
+	migrate -path pkg/database/migration -database "postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable" -verbose up
+
+migrate-down:
+	migrate -path pkg/database/migration -database "postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable" -verbose down
+
+.PHONY: go-build go-dev go-test go-mock migrate-file migrate-up migrate-down
