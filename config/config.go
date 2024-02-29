@@ -23,31 +23,36 @@ var (
 	lock = &sync.Mutex{}
 )
 
-func LoadConfig(path string) (err error) {
+func LoadConfig(path string) (*Config, error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigType("env")
-	viper.SetConfigFile(".env")
+	// viper.SetConfigFile(".env")
+	viper.SetConfigName(".env")
 
 	viper.AutomaticEnv()
 
-	err = viper.ReadInConfig()
+	err := viper.ReadInConfig()
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	err = viper.Unmarshal(&cfg)
-	return
+	var conf Config
+	err = viper.Unmarshal(&conf)
+
+	return &conf, err
 }
 
-func GetConfig() *Config {
+func GetConfig(path string) *Config {
 	lock.Lock()
 	defer lock.Unlock()
 
 	if cfg == nil {
-		err := LoadConfig("../")
+		var err error
+
+		cfg, err = LoadConfig(path)
 		if err != nil {
 			slog.Error("error LoadConfig", "err", err)
-			return nil
+			panic(err)
 		}
 	}
 
