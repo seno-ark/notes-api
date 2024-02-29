@@ -45,6 +45,56 @@ info:
   version: "1.0"
 paths:
   /notes:
+    get:
+      description: Get list of note.
+      parameters:
+      - description: Pagination page number (default 1, max 500)
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: Pagination data limit  (default 10, max 100)
+        example: 10
+        in: query
+        name: count
+        type: integer
+      - description: 'Data sorting (available fields: id, title, created_at, updated_at).
+          For descending order use prefix '
+        example: -created_at
+        in: query
+        name: sort
+        type: string
+      - description: Keyword for searching note by title or content
+        example: to do list
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get list of note.
+      tags:
+      - Notes
     post:
       consumes:
       - application/json

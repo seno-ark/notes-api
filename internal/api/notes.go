@@ -187,4 +187,44 @@ func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, resp.Set("success", note))
 }
 
-func (h *handler) GetNoteList(w http.ResponseWriter, r *http.Request) {}
+// GetNoteList
+// @Summary			Get list of note.
+// @Description		Get list of note.
+// @Tags			Notes
+// @Produce			json
+// @Param			page			query			int	     false	"Pagination page number (default 1, max 500)"				example(1)
+// @Param			count			query			int	     false	"Pagination data limit  (default 10, max 100)"				example(10)
+// @Param			sort			query			string	 false	"Data sorting (available fields: id, title, created_at, updated_at). For descending order use prefix "-"	example(-created_at)
+// @Param			search			query			string	 false	"Keyword for searching note by title or content" 			example(to do list)
+// @Success			200 			{object}		utils.Response
+// @Failure			400				{object}		utils.Response
+// @Failure			401				{object}		utils.Response
+// @Failure			422				{object}		utils.Response
+// @Failure			500				{object}		utils.Response
+// @Router	/notes [get]
+func (h *handler) GetNoteList(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	resp := utils.NewResponse()
+	q := r.URL.Query()
+
+	page, count := utils.Pagination(q.Get("page"), q.Get("count"))
+
+	params := &entity.GetNoteListParams{
+		Offset: (page - 1) * count,
+		Limit:  count,
+		Sort:   q.Get("sort"),
+		Search: q.Get("search"),
+	}
+	notes, total, err := h.usecase.GetNoteList(ctx, params)
+	if err != nil {
+		status, message := appErr.ErrStatusCode(err)
+
+		render.Status(r, status)
+		render.JSON(w, r, resp.Set(message, nil))
+		return
+	}
+
+	resp.AddMeta(page, count, total)
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, resp.Set("success", notes))
+}
