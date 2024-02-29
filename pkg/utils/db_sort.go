@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// SortValidation used for validating "sort" parameter
 func SortValidation(sortBy, defaultSort string, availableSorts []string) string {
 
 	for _, as := range availableSorts {
@@ -16,7 +17,8 @@ func SortValidation(sortBy, defaultSort string, availableSorts []string) string 
 	return defaultSort
 }
 
-func ToSqlSort(sortBy string) string {
+// ToSQLSort used for converting "sort" parameter to sql order
+func ToSQLSort(sortBy string) string {
 	order := "id ASC"
 
 	if strings.HasPrefix(sortBy, "-") && len(sortBy) > 1 {

@@ -7,6 +7,7 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
+// ULID generates ULID ID
 func ULID() (string, error) {
 	entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
 	ms := ulid.Timestamp(time.Now())

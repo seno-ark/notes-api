@@ -1,3 +1,4 @@
+// Package repository provides application repository implementation
 package repository
 
 import (
@@ -18,6 +19,7 @@ type noteRepository struct {
 	db *gorm.DB
 }
 
+// NewNoteRepository returns new noteRepository that implementation of internal.NoteRepository
 func NewNoteRepository(db *gorm.DB) internal.NoteRepository {
 	return &noteRepository{
 		db: db,
@@ -90,7 +92,7 @@ func (r *noteRepository) GetNoteList(ctx context.Context, params *entity.GetNote
 
 	if params.Sort != "" {
 		validSort := utils.SortValidation(params.Sort, order, availableSorts)
-		order = utils.ToSqlSort(validSort)
+		order = utils.ToSQLSort(validSort)
 	}
 
 	query := r.db.WithContext(ctx).Table("notes")

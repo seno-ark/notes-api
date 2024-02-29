@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// ParseValidatorErr map validator error to list of string
 func ParseValidatorErr(err error) []string {
 	errMessages := []string{}
 

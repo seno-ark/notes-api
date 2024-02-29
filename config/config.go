@@ -1,3 +1,4 @@
+// Package config provides all mapped env variables into struct
 package config
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config schema for mapping env variables
 type Config struct {
 	Port string `mapstructure:"PORT"`
 
@@ -23,10 +25,9 @@ var (
 	lock = &sync.Mutex{}
 )
 
-func LoadConfig(path string) (*Config, error) {
+func loadConfig(path string) (*Config, error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigType("env")
-	// viper.SetConfigFile(".env")
 	viper.SetConfigName(".env")
 
 	viper.AutomaticEnv()
@@ -42,6 +43,7 @@ func LoadConfig(path string) (*Config, error) {
 	return &conf, err
 }
 
+// GetConfig returns config data
 func GetConfig(path string) *Config {
 	lock.Lock()
 	defer lock.Unlock()
@@ -49,7 +51,7 @@ func GetConfig(path string) *Config {
 	if cfg == nil {
 		var err error
 
-		cfg, err = LoadConfig(path)
+		cfg, err = loadConfig(path)
 		if err != nil {
 			slog.Error("error LoadConfig", "err", err)
 			panic(err)

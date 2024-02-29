@@ -1,3 +1,4 @@
+// Package main provides main package for api application
 package main
 
 import (

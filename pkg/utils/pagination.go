@@ -5,11 +5,12 @@ import (
 )
 
 const (
-	MAX_PAGINATION_PAGE      = 500
-	MAX_PAGINATION_COUNT     = 100
-	DEFAULT_PAGINATION_COUNT = 10
+	maxPaginationPage      = 500
+	maxPaginationCount     = 100
+	defaultPaginationCount = 10
 )
 
+// Pagination is used for convert and validate "page" & "count" parameter
 func Pagination(pageStr, countStr string) (page, count int) {
 
 	if pageStr != "" {
@@ -21,14 +22,14 @@ func Pagination(pageStr, countStr string) (page, count int) {
 
 	if page < 1 {
 		page = 1
-	} else if page > MAX_PAGINATION_PAGE {
-		page = MAX_PAGINATION_PAGE
+	} else if page > maxPaginationPage {
+		page = maxPaginationPage
 	}
 
 	if count < 1 {
-		count = DEFAULT_PAGINATION_COUNT
-	} else if count > MAX_PAGINATION_COUNT {
-		count = MAX_PAGINATION_COUNT
+		count = defaultPaginationCount
+	} else if count > maxPaginationCount {
+		count = maxPaginationCount
 	}
 
 	return

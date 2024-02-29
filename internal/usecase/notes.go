@@ -1,3 +1,4 @@
+// Package usecase provides application logic implementation
 package usecase
 
 import (
@@ -10,6 +11,7 @@ type noteUsecase struct {
 	repository internal.NoteRepository
 }
 
+// NewNoteUsecase returns new noteUsecase that implementation of internal.NoteUsecase
 func NewNoteUsecase(repository internal.NoteRepository) internal.NoteUsecase {
 	return &noteUsecase{
 		repository: repository,

@@ -1,3 +1,4 @@
+// Package database provides database connection management and database migrations
 package database
 
 import (
@@ -12,6 +13,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// Postgres return new gorm postgres db connection
 func Postgres(conf *config.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta",
 		conf.DbHost,

@@ -1,3 +1,4 @@
+// Package api provides application routes and handler for api
 package api
 
 import (
@@ -7,19 +8,22 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type handler struct {
+// Handler provides all endpoint handlers
+type Handler struct {
 	usecase  internal.NoteUsecase
 	validate *validator.Validate
 }
 
-func NewHandler(usecase internal.NoteUsecase) *handler {
-	return &handler{
+// NewHandler returns new *Handler
+func NewHandler(usecase internal.NoteUsecase) *Handler {
+	return &Handler{
 		usecase:  usecase,
 		validate: validator.New(),
 	}
 }
 
-func Routes(r *chi.Mux, h *handler) {
+// Routes map routes and handlers
+func Routes(r *chi.Mux, h *Handler) {
 	r.Post("/notes", h.CreateNote)
 	r.Put("/notes/{note_id}", h.UpdateNote)
 	r.Delete("/notes/{note_id}", h.DeleteNote)

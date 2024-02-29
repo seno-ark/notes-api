@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-// CreateNote
+// CreateNote create note handler
 // @Summary			Create Note.
 // @Description		Create new Note.
 // @Tags			Notes
@@ -22,7 +22,7 @@ import (
 // @Failure			400		{object}	utils.Response
 // @Failure			500		{object}	utils.Response
 // @Router	/notes [post]
-func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	resp := utils.NewResponse()
 
@@ -55,7 +55,7 @@ func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, resp.Set("success", note))
 }
 
-// UpdateNote
+// UpdateNote update note handler
 // @Summary			Update Note.
 // @Description		Update existing Note.
 // @Tags			Notes
@@ -68,7 +68,7 @@ func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 // @Failure			404		{object}	utils.Response
 // @Failure			500		{object}	utils.Response
 // @Router	/notes/{note_id} [put]
-func (h *handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	resp := utils.NewResponse()
 
@@ -108,7 +108,7 @@ func (h *handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, resp.Set("success", note))
 }
 
-// DeleteNote
+// DeleteNote delete note handler
 // @Summary			Delete note.
 // @Description		Delete note.
 // @Tags			Notes
@@ -118,7 +118,7 @@ func (h *handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
 // @Failure			404				{object}		utils.Response
 // @Failure			500				{object}		utils.Response
 // @Router	/notes/{note_id} [delete]
-func (h *handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	resp := utils.NewResponse()
 
@@ -146,7 +146,7 @@ func (h *handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, resp.Set("success", result))
 }
 
-// GetNote
+// GetNote get note handler
 // @Summary			Get note by note ID.
 // @Description		Get note by note ID.
 // @Tags			Notes
@@ -156,7 +156,7 @@ func (h *handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
 // @Failure			404				{object}		utils.Response
 // @Failure			500				{object}		utils.Response
 // @Router	/notes/{note_id} [get]
-func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetNote(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	resp := utils.NewResponse()
 
@@ -180,7 +180,7 @@ func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, resp.Set("success", note))
 }
 
-// GetNoteList
+// GetNoteList get note list handler
 // @Summary			Get list of note.
 // @Description		Get list of note.
 // @Tags			Notes
@@ -192,7 +192,7 @@ func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {
 // @Success			200 			{object}		utils.Response{data=[]entity.Note}
 // @Failure			500				{object}		utils.Response
 // @Router	/notes [get]
-func (h *handler) GetNoteList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetNoteList(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	resp := utils.NewResponse()
 	q := r.URL.Query()
