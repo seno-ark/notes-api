@@ -14,9 +14,7 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	var err error
-
-	config := config.GetConfig()
+	config := config.GetConfig("./../../")
 
 	testDB, err := database.Postgres(config)
 	if err != nil {

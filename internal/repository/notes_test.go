@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"notes-api/internal/entity"
+	appErr "notes-api/pkg/error"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,8 +23,20 @@ func TestNotes(t *testing.T) {
 		}
 		noteID, err = testRepository.CreateNote(context.Background(), payload)
 
-		assert.Empty(t, err)
+		assert.NoError(t, err)
 		assert.NotEqual(t, 0, len(noteID))
+	})
+
+	t.Run("Success Get Created Note", func(t *testing.T) {
+		note, err := testRepository.GetNote(context.Background(), noteID)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, note)
+
+		assert.Equal(t, noteID, note.ID)
+		assert.Equal(t, "New Note v1", note.Title)
+		assert.Equal(t, "TestNotes v1", note.Content)
+		assert.Equal(t, note.CreatedAt, note.UpdatedAt)
 	})
 
 	t.Run("Success Update Note", func(t *testing.T) {
@@ -34,32 +47,48 @@ func TestNotes(t *testing.T) {
 		}
 		updatedNoteID, err := testRepository.UpdateNote(context.Background(), payload)
 
-		assert.Empty(t, err)
+		assert.NoError(t, err)
 		assert.NotEqual(t, 0, len(updatedNoteID))
 		assert.Equal(t, noteID, updatedNoteID)
 	})
 
-	t.Run("Success Get Note", func(t *testing.T) {
+	t.Run("Success Get Updated Note", func(t *testing.T) {
 		note, err := testRepository.GetNote(context.Background(), noteID)
 
-		assert.Empty(t, err)
+		assert.NoError(t, err)
 		assert.NotEmpty(t, note)
 
+		assert.Equal(t, noteID, note.ID)
 		assert.Equal(t, "Updated Note v2", note.Title)
 		assert.Equal(t, "TestNotes v2", note.Content)
+		assert.NotEqual(t, note.CreatedAt, note.UpdatedAt)
 	})
 
 	t.Run("Success Get Note List", func(t *testing.T) {
 		filter := &entity.GetNoteListFilter{
 			Offset: 0,
 			Limit:  10,
-			Sort:   "id",
+			Sort:   "-created_at",
 			Search: "",
 		}
 		notes, total, err := testRepository.GetNoteList(context.Background(), filter)
 
-		assert.Empty(t, err)
+		assert.NoError(t, err)
 		assert.NotEmpty(t, total)
 		assert.NotEmpty(t, notes)
+	})
+
+	t.Run("Success Delete Note", func(t *testing.T) {
+		err := testRepository.DeleteNote(context.Background(), noteID)
+
+		assert.NoError(t, err)
+	})
+
+	t.Run("Get Deleted Note", func(t *testing.T) {
+		note, err := testRepository.GetNote(context.Background(), noteID)
+
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, appErr.ErrNotFound)
+		assert.Empty(t, note)
 	})
 }
