@@ -16,7 +16,7 @@ func NewNoteUsecase(repository internal.NoteRepository) internal.NoteUsecase {
 	}
 }
 
-func (u *noteUsecase) CreateNote(ctx context.Context, payload *entity.Note) (*entity.Note, error) {
+func (u *noteUsecase) CreateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (*entity.Note, error) {
 	noteID, err := u.repository.CreateNote(ctx, payload)
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (u *noteUsecase) CreateNote(ctx context.Context, payload *entity.Note) (*en
 	return u.repository.GetNote(ctx, noteID)
 }
 
-func (u *noteUsecase) UpdateNote(ctx context.Context, payload *entity.Note) (*entity.Note, error) {
+func (u *noteUsecase) UpdateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (*entity.Note, error) {
 	_, err := u.repository.GetNote(ctx, payload.ID)
 	if err != nil {
 		return nil, err

@@ -17,7 +17,7 @@ func TestNotes(t *testing.T) {
 	)
 
 	t.Run("Success Create Note", func(t *testing.T) {
-		payload := &entity.Note{
+		payload := &entity.CreateUpdateNotePayload{
 			Title:   "New Note v1",
 			Content: "TestNotes v1",
 		}
@@ -40,7 +40,7 @@ func TestNotes(t *testing.T) {
 	})
 
 	t.Run("Success Update Note", func(t *testing.T) {
-		payload := &entity.Note{
+		payload := &entity.CreateUpdateNotePayload{
 			ID:      noteID,
 			Title:   "Updated Note v2",
 			Content: "TestNotes v2",

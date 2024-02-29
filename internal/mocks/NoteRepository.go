@@ -15,7 +15,7 @@ type NoteRepository struct {
 }
 
 // CreateNote provides a mock function with given fields: ctx, payload
-func (_m *NoteRepository) CreateNote(ctx context.Context, payload *entity.Note) (string, error) {
+func (_m *NoteRepository) CreateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (string, error) {
 	ret := _m.Called(ctx, payload)
 
 	if len(ret) == 0 {
@@ -24,16 +24,16 @@ func (_m *NoteRepository) CreateNote(ctx context.Context, payload *entity.Note) 
 
 	var r0 string
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Note) (string, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.CreateUpdateNotePayload) (string, error)); ok {
 		return rf(ctx, payload)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Note) string); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.CreateUpdateNotePayload) string); ok {
 		r0 = rf(ctx, payload)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.Note) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *entity.CreateUpdateNotePayload) error); ok {
 		r1 = rf(ctx, payload)
 	} else {
 		r1 = ret.Error(1)
@@ -128,7 +128,7 @@ func (_m *NoteRepository) GetNoteList(ctx context.Context, params *entity.GetNot
 }
 
 // UpdateNote provides a mock function with given fields: ctx, payload
-func (_m *NoteRepository) UpdateNote(ctx context.Context, payload *entity.Note) (string, error) {
+func (_m *NoteRepository) UpdateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (string, error) {
 	ret := _m.Called(ctx, payload)
 
 	if len(ret) == 0 {
@@ -137,16 +137,16 @@ func (_m *NoteRepository) UpdateNote(ctx context.Context, payload *entity.Note) 
 
 	var r0 string
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Note) (string, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.CreateUpdateNotePayload) (string, error)); ok {
 		return rf(ctx, payload)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Note) string); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.CreateUpdateNotePayload) string); ok {
 		r0 = rf(ctx, payload)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.Note) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *entity.CreateUpdateNotePayload) error); ok {
 		r1 = rf(ctx, payload)
 	} else {
 		r1 = ret.Error(1)

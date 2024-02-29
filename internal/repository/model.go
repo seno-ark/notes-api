@@ -13,12 +13,10 @@ type Note struct {
 	UpdatedAt time.Time
 }
 
-func (m *Note) FromEntity(e *entity.Note) {
+func (m *Note) FromDto(e *entity.CreateUpdateNotePayload) {
 	m.ID = e.ID
 	m.Title = e.Title
 	m.Content = e.Content
-	m.CreatedAt = e.CreatedAt
-	m.UpdatedAt = e.UpdatedAt
 }
 
 func (m *Note) ToEntity() *entity.Note {

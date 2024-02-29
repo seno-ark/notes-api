@@ -15,7 +15,7 @@ import (
 func TestCreateNote(t *testing.T) {
 	ctx := context.Background()
 
-	payload := &entity.Note{
+	payload := &entity.CreateUpdateNotePayload{
 		Title:   "Test Create Note",
 		Content: "Created from TestCreateNote",
 	}
@@ -63,7 +63,7 @@ func TestUpdateNote(t *testing.T) {
 	ctx := context.Background()
 
 	id, _ := utils.ULID()
-	payload := &entity.Note{
+	payload := &entity.CreateUpdateNotePayload{
 		ID:      id,
 		Title:   "Test Update Note",
 		Content: "Updated from TestUpdateNote",

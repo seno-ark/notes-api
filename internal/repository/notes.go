@@ -24,9 +24,9 @@ func NewNoteRepository(db *gorm.DB) internal.NoteRepository {
 	}
 }
 
-func (r *noteRepository) CreateNote(ctx context.Context, payload *entity.Note) (string, error) {
+func (r *noteRepository) CreateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (string, error) {
 	model := Note{}
-	model.FromEntity(payload)
+	model.FromDto(payload)
 	model.ID, _ = utils.ULID()
 
 	err := r.db.WithContext(ctx).Table("notes").Create(&model).Error
@@ -38,9 +38,9 @@ func (r *noteRepository) CreateNote(ctx context.Context, payload *entity.Note) (
 	return model.ID, nil
 }
 
-func (r *noteRepository) UpdateNote(ctx context.Context, payload *entity.Note) (string, error) {
+func (r *noteRepository) UpdateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (string, error) {
 	model := Note{}
-	model.FromEntity(payload)
+	model.FromDto(payload)
 
 	err := r.db.WithContext(ctx).Table("notes").Model(&model).Updates(model).Error
 	if err != nil {
