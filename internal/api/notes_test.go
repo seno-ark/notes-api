@@ -11,23 +11,22 @@ import (
 	appErr "notes-api/pkg/error"
 	"notes-api/pkg/utils"
 	"testing"
-	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateNote(t *testing.T) {
-	nowUtc := time.Now().UTC()
 	noteID, _ := utils.ULID()
 	noteTitle := "Any Note"
 	noteContent := "Just random new Note"
 
 	testCases := []struct {
-		Name       string
-		Payload    *entity.CreateUpdateNotePayload
-		Result     *entity.Note
-		Error      error
-		StatusCode int
+		Name               string
+		Payload            *entity.CreateUpdateNotePayload
+		MockResult         *entity.Note
+		MockError          error
+		ExpectedStatusCode int
 	}{
 		{
 			Name: "Create Note Success",
@@ -35,14 +34,12 @@ func TestCreateNote(t *testing.T) {
 				Title:   noteTitle,
 				Content: noteContent,
 			},
-			Result: &entity.Note{
-				ID:        noteID,
-				Title:     noteTitle,
-				Content:   noteContent,
-				CreatedAt: nowUtc,
-				UpdatedAt: nowUtc,
+			MockResult: &entity.Note{
+				ID:      noteID,
+				Title:   noteTitle,
+				Content: noteContent,
 			},
-			StatusCode: http.StatusCreated,
+			ExpectedStatusCode: http.StatusCreated,
 		},
 		{
 			Name: "Create Note Failed 400",
@@ -50,7 +47,7 @@ func TestCreateNote(t *testing.T) {
 				Title:   "",
 				Content: noteContent,
 			},
-			StatusCode: http.StatusBadRequest,
+			ExpectedStatusCode: http.StatusBadRequest,
 		},
 		{
 			Name: "Create Note Failed 500",
@@ -58,32 +55,97 @@ func TestCreateNote(t *testing.T) {
 				Title:   noteTitle,
 				Content: noteContent,
 			},
-			Error:      appErr.NewErrInternalServer("failed to create note"),
-			StatusCode: http.StatusInternalServerError,
+			MockError:          appErr.NewErrInternalServer("failed to create note"),
+			ExpectedStatusCode: http.StatusInternalServerError,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
-			mockNoteUsecase := mocks.NewNoteUsecase(t)
-
-			if tc.Result != nil || tc.Error != nil {
-				mockNoteUsecase.On("CreateNote", context.Background(), tc.Payload).Return(tc.Result, tc.Error).Once()
-			}
-
-			testHandler := NewHandler(mockNoteUsecase)
-
-			rec := httptest.NewRecorder()
-
 			jsonPayload, _ := json.Marshal(tc.Payload)
 			req, err := http.NewRequest("POST", "/notes", bytes.NewReader(jsonPayload))
 			if err != nil {
 				t.Fatal(err)
 			}
+			rec := httptest.NewRecorder()
 
+			mockNoteUsecase := mocks.NewNoteUsecase(t)
+			if tc.MockResult != nil || tc.MockError != nil {
+				mockNoteUsecase.On("CreateNote", context.Background(), tc.Payload).Return(tc.MockResult, tc.MockError).Once()
+			}
+			testHandler := NewHandler(mockNoteUsecase)
 			testHandler.CreateNote(rec, req)
 
-			assert.Equal(t, tc.StatusCode, rec.Result().StatusCode)
+			assert.Equal(t, tc.ExpectedStatusCode, rec.Result().StatusCode)
+		})
+	}
+}
+
+func TestUpdateNote(t *testing.T) {
+	noteID, _ := utils.ULID()
+	noteTitle := "Any Note"
+	noteContent := "Just another random Note"
+
+	testCases := []struct {
+		Name               string
+		Payload            *entity.CreateUpdateNotePayload
+		MockResult         *entity.Note
+		MockError          error
+		ExpectedStatusCode int
+	}{
+		{
+			Name: "Update Note Success",
+			Payload: &entity.CreateUpdateNotePayload{
+				Title:   noteTitle,
+				Content: noteContent,
+			},
+			MockResult: &entity.Note{
+				ID:      noteID,
+				Title:   noteTitle,
+				Content: noteContent,
+			},
+			ExpectedStatusCode: http.StatusOK,
+		},
+		{
+			Name: "Update Note Failed 400",
+			Payload: &entity.CreateUpdateNotePayload{
+				Title:   "",
+				Content: noteContent,
+			},
+			ExpectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			Name: "Update Note Failed 500",
+			Payload: &entity.CreateUpdateNotePayload{
+				Title:   noteTitle,
+				Content: noteContent,
+			},
+			MockError:          appErr.NewErrInternalServer("failed to update note"),
+			ExpectedStatusCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			rctx := chi.NewRouteContext()
+			rctx.URLParams.Add("note_id", noteID)
+			jsonPayload, _ := json.Marshal(tc.Payload)
+
+			rec := httptest.NewRecorder()
+			req, err := http.NewRequest("PUT", "/notes/{note_id}", bytes.NewReader(jsonPayload))
+			if err != nil {
+				t.Fatal(err)
+			}
+			req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+			mockNoteUsecase := mocks.NewNoteUsecase(t)
+			if tc.MockResult != nil || tc.MockError != nil {
+				mockNoteUsecase.On("UpdateNote", req.Context(), noteID, tc.Payload).Return(tc.MockResult, tc.MockError).Once()
+			}
+			testHandler := NewHandler(mockNoteUsecase)
+			testHandler.UpdateNote(rec, req)
+
+			assert.Equal(t, tc.ExpectedStatusCode, rec.Result().StatusCode)
 		})
 	}
 }
