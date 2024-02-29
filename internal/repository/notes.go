@@ -38,9 +38,10 @@ func (r *noteRepository) CreateNote(ctx context.Context, payload *entity.CreateU
 	return model.ID, nil
 }
 
-func (r *noteRepository) UpdateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (string, error) {
+func (r *noteRepository) UpdateNote(ctx context.Context, noteID string, payload *entity.CreateUpdateNotePayload) (string, error) {
 	model := Note{}
 	model.FromDto(payload)
+	model.ID = noteID
 
 	err := r.db.WithContext(ctx).Table("notes").Model(&model).Updates(model).Error
 	if err != nil {

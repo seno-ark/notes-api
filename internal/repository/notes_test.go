@@ -41,11 +41,10 @@ func TestNotes(t *testing.T) {
 
 	t.Run("Success Update Note", func(t *testing.T) {
 		payload := &entity.CreateUpdateNotePayload{
-			ID:      noteID,
 			Title:   "Updated Note v2",
 			Content: "TestNotes v2",
 		}
-		updatedNoteID, err := testRepository.UpdateNote(context.Background(), payload)
+		updatedNoteID, err := testRepository.UpdateNote(context.Background(), noteID, payload)
 
 		assert.NoError(t, err)
 		assert.NotEqual(t, 0, len(updatedNoteID))

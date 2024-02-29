@@ -129,9 +129,9 @@ func (_m *NoteUsecase) GetNoteList(ctx context.Context, params *entity.GetNoteLi
 	return r0, r1, r2
 }
 
-// UpdateNote provides a mock function with given fields: ctx, payload
-func (_m *NoteUsecase) UpdateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (*entity.Note, error) {
-	ret := _m.Called(ctx, payload)
+// UpdateNote provides a mock function with given fields: ctx, noteID, payload
+func (_m *NoteUsecase) UpdateNote(ctx context.Context, noteID string, payload *entity.CreateUpdateNotePayload) (*entity.Note, error) {
+	ret := _m.Called(ctx, noteID, payload)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateNote")
@@ -139,19 +139,19 @@ func (_m *NoteUsecase) UpdateNote(ctx context.Context, payload *entity.CreateUpd
 
 	var r0 *entity.Note
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.CreateUpdateNotePayload) (*entity.Note, error)); ok {
-		return rf(ctx, payload)
+	if rf, ok := ret.Get(0).(func(context.Context, string, *entity.CreateUpdateNotePayload) (*entity.Note, error)); ok {
+		return rf(ctx, noteID, payload)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.CreateUpdateNotePayload) *entity.Note); ok {
-		r0 = rf(ctx, payload)
+	if rf, ok := ret.Get(0).(func(context.Context, string, *entity.CreateUpdateNotePayload) *entity.Note); ok {
+		r0 = rf(ctx, noteID, payload)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Note)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.CreateUpdateNotePayload) error); ok {
-		r1 = rf(ctx, payload)
+	if rf, ok := ret.Get(1).(func(context.Context, string, *entity.CreateUpdateNotePayload) error); ok {
+		r1 = rf(ctx, noteID, payload)
 	} else {
 		r1 = ret.Error(1)
 	}

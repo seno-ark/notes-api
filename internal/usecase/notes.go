@@ -25,18 +25,18 @@ func (u *noteUsecase) CreateNote(ctx context.Context, payload *entity.CreateUpda
 	return u.repository.GetNote(ctx, noteID)
 }
 
-func (u *noteUsecase) UpdateNote(ctx context.Context, payload *entity.CreateUpdateNotePayload) (*entity.Note, error) {
-	_, err := u.repository.GetNote(ctx, payload.ID)
+func (u *noteUsecase) UpdateNote(ctx context.Context, noteID string, payload *entity.CreateUpdateNotePayload) (*entity.Note, error) {
+	_, err := u.repository.GetNote(ctx, noteID)
 	if err != nil {
 		return nil, err
 	}
 
-	noteID, err := u.repository.UpdateNote(ctx, payload)
+	updatedNoteID, err := u.repository.UpdateNote(ctx, noteID, payload)
 	if err != nil {
 		return nil, err
 	}
 
-	return u.repository.GetNote(ctx, noteID)
+	return u.repository.GetNote(ctx, updatedNoteID)
 }
 
 func (u *noteUsecase) DeleteNote(ctx context.Context, noteID string) error {

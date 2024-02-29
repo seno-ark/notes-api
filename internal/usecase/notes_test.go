@@ -23,18 +23,18 @@ func TestCreateNote(t *testing.T) {
 	t.Run("Success Create Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		id, _ := utils.ULID()
+		noteID, _ := utils.ULID()
 		nowUtc := time.Now().UTC()
 		result := &entity.Note{
-			ID:        id,
+			ID:        noteID,
 			Title:     payload.Title,
 			Content:   payload.Content,
 			CreatedAt: nowUtc,
 			UpdatedAt: nowUtc,
 		}
 
-		mockNoteRepository.On("CreateNote", ctx, payload).Return(id, nil).Once()
-		mockNoteRepository.On("GetNote", ctx, id).Return(result, nil).Once()
+		mockNoteRepository.On("CreateNote", ctx, payload).Return(noteID, nil).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(result, nil).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
 		createdNote, err := testNoteUsecase.CreateNote(ctx, payload)
@@ -62,16 +62,15 @@ func TestCreateNote(t *testing.T) {
 func TestUpdateNote(t *testing.T) {
 	ctx := context.Background()
 
-	id, _ := utils.ULID()
+	noteID, _ := utils.ULID()
 	payload := &entity.CreateUpdateNotePayload{
-		ID:      id,
 		Title:   "Test Update Note",
 		Content: "Updated from TestUpdateNote",
 	}
 
 	nowUtc := time.Now().UTC()
 	expectedResult := &entity.Note{
-		ID:        id,
+		ID:        noteID,
 		Title:     payload.Title,
 		Content:   payload.Content,
 		CreatedAt: nowUtc,
@@ -81,12 +80,12 @@ func TestUpdateNote(t *testing.T) {
 	t.Run("Success Update Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
-		mockNoteRepository.On("UpdateNote", ctx, payload).Return(id, nil).Once()
-		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(expectedResult, nil).Once()
+		mockNoteRepository.On("UpdateNote", ctx, noteID, payload).Return(noteID, nil).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(expectedResult, nil).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		updatedNote, err := testNoteUsecase.UpdateNote(ctx, payload)
+		updatedNote, err := testNoteUsecase.UpdateNote(ctx, noteID, payload)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedResult, updatedNote)
@@ -95,13 +94,13 @@ func TestUpdateNote(t *testing.T) {
 	t.Run("Failed Update Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(expectedResult, nil).Once()
 
 		errUpdateNote := appErr.NewErrInternalServer("failed to update note")
-		mockNoteRepository.On("UpdateNote", ctx, payload).Return("", errUpdateNote).Once()
+		mockNoteRepository.On("UpdateNote", ctx, noteID, payload).Return("", errUpdateNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		createdNote, err := testNoteUsecase.UpdateNote(ctx, payload)
+		createdNote, err := testNoteUsecase.UpdateNote(ctx, noteID, payload)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, appErr.ErrInternalServer)
@@ -112,10 +111,10 @@ func TestUpdateNote(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
 		errGetNote := appErr.NewErrNotFound("note not found")
-		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		createdNote, err := testNoteUsecase.UpdateNote(ctx, payload)
+		createdNote, err := testNoteUsecase.UpdateNote(ctx, noteID, payload)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, appErr.ErrNotFound)
@@ -126,10 +125,10 @@ func TestUpdateNote(t *testing.T) {
 func TestDeleteNote(t *testing.T) {
 	ctx := context.Background()
 
-	id, _ := utils.ULID()
+	noteID, _ := utils.ULID()
 	nowUtc := time.Now().UTC()
 	expectedResult := &entity.Note{
-		ID:        id,
+		ID:        noteID,
 		Title:     "Test Delete Note",
 		Content:   "Deleted from TestDeleteNote",
 		CreatedAt: nowUtc,
@@ -139,11 +138,11 @@ func TestDeleteNote(t *testing.T) {
 	t.Run("Success Delete Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
-		mockNoteRepository.On("DeleteNote", ctx, id).Return(nil).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(expectedResult, nil).Once()
+		mockNoteRepository.On("DeleteNote", ctx, noteID).Return(nil).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		err := testNoteUsecase.DeleteNote(ctx, id)
+		err := testNoteUsecase.DeleteNote(ctx, noteID)
 
 		assert.NoError(t, err)
 	})
@@ -151,13 +150,13 @@ func TestDeleteNote(t *testing.T) {
 	t.Run("Failed Delete Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(expectedResult, nil).Once()
 
 		errDeleteNote := appErr.NewErrInternalServer("failed to delete note")
-		mockNoteRepository.On("DeleteNote", ctx, id).Return(errDeleteNote).Once()
+		mockNoteRepository.On("DeleteNote", ctx, noteID).Return(errDeleteNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		err := testNoteUsecase.DeleteNote(ctx, id)
+		err := testNoteUsecase.DeleteNote(ctx, noteID)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, appErr.ErrInternalServer)
@@ -167,10 +166,10 @@ func TestDeleteNote(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
 		errGetNote := appErr.NewErrNotFound("note not found")
-		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		err := testNoteUsecase.DeleteNote(ctx, id)
+		err := testNoteUsecase.DeleteNote(ctx, noteID)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, appErr.ErrNotFound)
@@ -180,10 +179,10 @@ func TestDeleteNote(t *testing.T) {
 func TestGetNote(t *testing.T) {
 	ctx := context.Background()
 
-	id, _ := utils.ULID()
+	noteID, _ := utils.ULID()
 	nowUtc := time.Now().UTC()
 	expectedResult := &entity.Note{
-		ID:        id,
+		ID:        noteID,
 		Title:     "Test Delete Note",
 		Content:   "Deleted from TestDeleteNote",
 		CreatedAt: nowUtc,
@@ -193,10 +192,10 @@ func TestGetNote(t *testing.T) {
 	t.Run("Success Get Note", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNote", ctx, id).Return(expectedResult, nil).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(expectedResult, nil).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		note, err := testNoteUsecase.GetNote(ctx, id)
+		note, err := testNoteUsecase.GetNote(ctx, noteID)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedResult, note)
@@ -206,10 +205,10 @@ func TestGetNote(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
 		errGetNote := appErr.NewErrInternalServer("failed to get note")
-		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		note, err := testNoteUsecase.GetNote(ctx, id)
+		note, err := testNoteUsecase.GetNote(ctx, noteID)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, appErr.ErrInternalServer)
@@ -220,10 +219,10 @@ func TestGetNote(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
 		errGetNote := appErr.NewErrNotFound("note not found")
-		mockNoteRepository.On("GetNote", ctx, id).Return(nil, errGetNote).Once()
+		mockNoteRepository.On("GetNote", ctx, noteID).Return(nil, errGetNote).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		note, err := testNoteUsecase.GetNote(ctx, id)
+		note, err := testNoteUsecase.GetNote(ctx, noteID)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, appErr.ErrNotFound)
@@ -234,11 +233,11 @@ func TestGetNote(t *testing.T) {
 func TestGetNoteList(t *testing.T) {
 	ctx := context.Background()
 
-	id, _ := utils.ULID()
+	noteID, _ := utils.ULID()
 	nowUtc := time.Now().UTC()
 	expectedResults := []*entity.Note{
 		{
-			ID:        id,
+			ID:        noteID,
 			Title:     "Test Delete Note",
 			Content:   "Deleted from TestDeleteNote",
 			CreatedAt: nowUtc,
