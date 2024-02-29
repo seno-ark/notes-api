@@ -18,10 +18,8 @@ import (
 // @Accept			json
 // @Produce			json
 // @Param 			note	body	entity.CreateUpdateNotePayload	true	"note data"
-// @Success			201		{object}	utils.Response
+// @Success			201		{object}	utils.Response{data=entity.Note}
 // @Failure			400		{object}	utils.Response
-// @Failure			401		{object}	utils.Response
-// @Failure			422		{object}	utils.Response
 // @Failure			500		{object}	utils.Response
 // @Router	/notes [post]
 func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
@@ -65,10 +63,9 @@ func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 // @Produce			json
 // @Param 			note_id	path	string							true	"Note ID" example(01HQSH92SNYQVCBDSD38XNBRYM)
 // @Param 			note	body	entity.CreateUpdateNotePayload	true	"note data"
-// @Success			200		{object}	utils.Response
+// @Success			200		{object}	utils.Response{data=entity.Note}
 // @Failure			400		{object}	utils.Response
-// @Failure			401		{object}	utils.Response
-// @Failure			422		{object}	utils.Response
+// @Failure			404		{object}	utils.Response
 // @Failure			500		{object}	utils.Response
 // @Router	/notes/{note_id} [put]
 func (h *handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
@@ -118,9 +115,7 @@ func (h *handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
 // @Produce			json
 // @Param			note_id			path			string	 true	"Note ID" example(01HQSH92SNYQVCBDSD38XNBRYM)
 // @Success			200 			{object}		utils.Response
-// @Failure			400				{object}		utils.Response
-// @Failure			401				{object}		utils.Response
-// @Failure			422				{object}		utils.Response
+// @Failure			404				{object}		utils.Response
 // @Failure			500				{object}		utils.Response
 // @Router	/notes/{note_id} [delete]
 func (h *handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
@@ -157,10 +152,8 @@ func (h *handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
 // @Tags			Notes
 // @Produce			json
 // @Param			note_id			path			string	 true	"Note ID"
-// @Success			200 			{object}		utils.Response
-// @Failure			400				{object}		utils.Response
-// @Failure			401				{object}		utils.Response
-// @Failure			422				{object}		utils.Response
+// @Success			200 			{object}		utils.Response{data=entity.Note}
+// @Failure			404				{object}		utils.Response
 // @Failure			500				{object}		utils.Response
 // @Router	/notes/{note_id} [get]
 func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {
@@ -196,10 +189,7 @@ func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {
 // @Param			count			query			int	     false	"Pagination data limit  (default 10, max 100)"				example(10)
 // @Param			sort			query			string	 false	"Data sorting (value: id/title/created_at/updated_at). For desc order, use prefix '-'"	example(-created_at)
 // @Param			search			query			string	 false	"Keyword for searching note by title or content" 			example(to do list)
-// @Success			200 			{object}		utils.Response
-// @Failure			400				{object}		utils.Response
-// @Failure			401				{object}		utils.Response
-// @Failure			422				{object}		utils.Response
+// @Success			200 			{object}		utils.Response{data=[]entity.Note}
 // @Failure			500				{object}		utils.Response
 // @Router	/notes [get]
 func (h *handler) GetNoteList(w http.ResponseWriter, r *http.Request) {

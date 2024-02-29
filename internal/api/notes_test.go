@@ -89,13 +89,15 @@ func TestUpdateNote(t *testing.T) {
 
 	testCases := []struct {
 		Name               string
+		NoteID             string
 		Payload            *entity.CreateUpdateNotePayload
 		MockResult         *entity.Note
 		MockError          error
 		ExpectedStatusCode int
 	}{
 		{
-			Name: "Update Note 200",
+			Name:   "Update Note 200",
+			NoteID: noteID,
 			Payload: &entity.CreateUpdateNotePayload{
 				Title:   noteTitle,
 				Content: noteContent,
@@ -108,7 +110,8 @@ func TestUpdateNote(t *testing.T) {
 			ExpectedStatusCode: http.StatusOK,
 		},
 		{
-			Name: "Update Note Failed 400",
+			Name:   "Update Note Failed 400",
+			NoteID: noteID,
 			Payload: &entity.CreateUpdateNotePayload{
 				Title:   "",
 				Content: noteContent,
@@ -116,7 +119,18 @@ func TestUpdateNote(t *testing.T) {
 			ExpectedStatusCode: http.StatusBadRequest,
 		},
 		{
-			Name: "Update Note Failed 500",
+			Name:   "Update Note Failed 404",
+			NoteID: "XXX",
+			Payload: &entity.CreateUpdateNotePayload{
+				Title:   noteTitle,
+				Content: noteContent,
+			},
+			MockError:          appErr.NewErrNotFound("note not found"),
+			ExpectedStatusCode: http.StatusNotFound,
+		},
+		{
+			Name:   "Update Note Failed 500",
+			NoteID: noteID,
 			Payload: &entity.CreateUpdateNotePayload{
 				Title:   noteTitle,
 				Content: noteContent,
@@ -137,12 +151,12 @@ func TestUpdateNote(t *testing.T) {
 			}
 
 			rctx := chi.NewRouteContext()
-			rctx.URLParams.Add("note_id", noteID)
+			rctx.URLParams.Add("note_id", tc.NoteID)
 			req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
 
 			mockNoteUsecase := mocks.NewNoteUsecase(t)
 			if tc.MockResult != nil || tc.MockError != nil {
-				mockNoteUsecase.On("UpdateNote", req.Context(), noteID, tc.Payload).Return(tc.MockResult, tc.MockError).Once()
+				mockNoteUsecase.On("UpdateNote", req.Context(), tc.NoteID, tc.Payload).Return(tc.MockResult, tc.MockError).Once()
 			}
 			testHandler := NewHandler(mockNoteUsecase)
 			testHandler.UpdateNote(rec, req)

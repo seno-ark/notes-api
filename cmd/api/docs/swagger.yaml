@@ -16,6 +16,19 @@ definitions:
     - content
     - title
     type: object
+  entity.Note:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
   utils.Response:
     properties:
       data: {}
@@ -75,19 +88,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/utils.Response'
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/entity.Note'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -112,17 +120,14 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/utils.Response'
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/entity.Note'
+              type: object
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "422":
-          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
@@ -149,16 +154,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/utils.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "422":
-          description: Unprocessable Entity
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
@@ -182,17 +179,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "422":
-          description: Unprocessable Entity
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/entity.Note'
+              type: object
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
@@ -225,17 +219,18 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Response'
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/entity.Note'
+              type: object
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/utils.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "422":
-          description: Unprocessable Entity
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
