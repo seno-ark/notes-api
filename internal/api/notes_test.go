@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"notes-api/internal/entity"
 	"notes-api/internal/mocks"
+	appErr "notes-api/pkg/error"
 	"notes-api/pkg/utils"
 	"testing"
 	"time"
@@ -16,40 +17,59 @@ import (
 )
 
 func TestCreateNote(t *testing.T) {
-	id, _ := utils.ULID()
 	nowUtc := time.Now().UTC()
-
-	payload := &entity.Note{
-		Title:   "New Note",
-		Content: "Just random new Note",
-	}
+	noteID, _ := utils.ULID()
+	noteTitle := "Any Note"
+	noteContent := "Just random new Note"
 
 	testCases := []struct {
 		Name       string
-		Payload    *entity.Note
+		Payload    *entity.CreateUpdateNotePayload
 		Result     *entity.Note
 		Error      error
 		StatusCode int
 	}{
 		{
-			Name:    "Create Note Success",
-			Payload: payload,
+			Name: "Create Note Success",
+			Payload: &entity.CreateUpdateNotePayload{
+				Title:   noteTitle,
+				Content: noteContent,
+			},
 			Result: &entity.Note{
-				ID:        id,
-				Title:     payload.Title,
-				Content:   payload.Content,
+				ID:        noteID,
+				Title:     noteTitle,
+				Content:   noteContent,
 				CreatedAt: nowUtc,
 				UpdatedAt: nowUtc,
 			},
-			Error:      nil,
 			StatusCode: http.StatusCreated,
+		},
+		{
+			Name: "Create Note Failed 400",
+			Payload: &entity.CreateUpdateNotePayload{
+				Title:   "",
+				Content: noteContent,
+			},
+			StatusCode: http.StatusBadRequest,
+		},
+		{
+			Name: "Create Note Failed 500",
+			Payload: &entity.CreateUpdateNotePayload{
+				Title:   noteTitle,
+				Content: noteContent,
+			},
+			Error:      appErr.NewErrInternalServer("failed to create note"),
+			StatusCode: http.StatusInternalServerError,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
 			mockNoteUsecase := mocks.NewNoteUsecase(t)
-			mockNoteUsecase.On("CreateBook", context.Background(), tc.Payload).Return(tc.Result, tc.Error).Once()
+
+			if tc.Result != nil || tc.Error != nil {
+				mockNoteUsecase.On("CreateNote", context.Background(), tc.Payload).Return(tc.Result, tc.Error).Once()
+			}
 
 			testHandler := NewHandler(mockNoteUsecase)
 
