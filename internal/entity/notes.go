@@ -10,7 +10,7 @@ type Note struct {
 	UpdatedAt time.Time
 }
 
-type GetNoteListFilter struct {
+type GetNoteListParams struct {
 	Offset int
 	Limit  int
 	Sort   string

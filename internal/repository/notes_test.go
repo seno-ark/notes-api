@@ -65,17 +65,45 @@ func TestNotes(t *testing.T) {
 	})
 
 	t.Run("Success Get Note List", func(t *testing.T) {
-		filter := &entity.GetNoteListFilter{
+		params := &entity.GetNoteListParams{
 			Offset: 0,
 			Limit:  10,
 			Sort:   "-created_at",
 			Search: "",
 		}
-		notes, total, err := testRepository.GetNoteList(context.Background(), filter)
+		notes, total, err := testRepository.GetNoteList(context.Background(), params)
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, total)
 		assert.NotEmpty(t, notes)
+	})
+
+	t.Run("Search Get Note List Found", func(t *testing.T) {
+		params := &entity.GetNoteListParams{
+			Offset: 0,
+			Limit:  10,
+			Sort:   "-created_at",
+			Search: "v2",
+		}
+		notes, total, err := testRepository.GetNoteList(context.Background(), params)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, total)
+		assert.NotEmpty(t, notes)
+	})
+
+	t.Run("Search Get Note List Not Found", func(t *testing.T) {
+		params := &entity.GetNoteListParams{
+			Offset: 0,
+			Limit:  10,
+			Sort:   "-created_at",
+			Search: "3c94n823m209n",
+		}
+		notes, total, err := testRepository.GetNoteList(context.Background(), params)
+
+		assert.NoError(t, err)
+		assert.Empty(t, total)
+		assert.Empty(t, notes)
 	})
 
 	t.Run("Success Delete Note", func(t *testing.T) {

@@ -90,9 +90,9 @@ func (_m *NoteRepository) GetNote(ctx context.Context, noteID string) (*entity.N
 	return r0, r1
 }
 
-// GetNoteList provides a mock function with given fields: ctx, filter
-func (_m *NoteRepository) GetNoteList(ctx context.Context, filter *entity.GetNoteListFilter) ([]*entity.Note, int64, error) {
-	ret := _m.Called(ctx, filter)
+// GetNoteList provides a mock function with given fields: ctx, params
+func (_m *NoteRepository) GetNoteList(ctx context.Context, params *entity.GetNoteListParams) ([]*entity.Note, int64, error) {
+	ret := _m.Called(ctx, params)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetNoteList")
@@ -101,25 +101,25 @@ func (_m *NoteRepository) GetNoteList(ctx context.Context, filter *entity.GetNot
 	var r0 []*entity.Note
 	var r1 int64
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.GetNoteListFilter) ([]*entity.Note, int64, error)); ok {
-		return rf(ctx, filter)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.GetNoteListParams) ([]*entity.Note, int64, error)); ok {
+		return rf(ctx, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.GetNoteListFilter) []*entity.Note); ok {
-		r0 = rf(ctx, filter)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.GetNoteListParams) []*entity.Note); ok {
+		r0 = rf(ctx, params)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*entity.Note)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.GetNoteListFilter) int64); ok {
-		r1 = rf(ctx, filter)
+	if rf, ok := ret.Get(1).(func(context.Context, *entity.GetNoteListParams) int64); ok {
+		r1 = rf(ctx, params)
 	} else {
 		r1 = ret.Get(1).(int64)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, *entity.GetNoteListFilter) error); ok {
-		r2 = rf(ctx, filter)
+	if rf, ok := ret.Get(2).(func(context.Context, *entity.GetNoteListParams) error); ok {
+		r2 = rf(ctx, params)
 	} else {
 		r2 = ret.Error(2)
 	}

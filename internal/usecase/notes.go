@@ -52,6 +52,6 @@ func (u *noteUsecase) GetNote(ctx context.Context, noteID string) (*entity.Note,
 	return u.repository.GetNote(ctx, noteID)
 }
 
-func (u *noteUsecase) GetNoteList(ctx context.Context, filter *entity.GetNoteListFilter) ([]*entity.Note, int64, error) {
-	return u.repository.GetNoteList(ctx, filter)
+func (u *noteUsecase) GetNoteList(ctx context.Context, params *entity.GetNoteListParams) ([]*entity.Note, int64, error) {
+	return u.repository.GetNoteList(ctx, params)
 }

@@ -246,16 +246,16 @@ func TestGetNoteList(t *testing.T) {
 		},
 	}
 
-	filter := &entity.GetNoteListFilter{}
+	params := &entity.GetNoteListParams{}
 
 	t.Run("Success Get Notes", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
 		expectedTotal := int64(1)
-		mockNoteRepository.On("GetNoteList", ctx, filter).Return(expectedResults, expectedTotal, nil).Once()
+		mockNoteRepository.On("GetNoteList", ctx, params).Return(expectedResults, expectedTotal, nil).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		notes, total, err := testNoteUsecase.GetNoteList(ctx, filter)
+		notes, total, err := testNoteUsecase.GetNoteList(ctx, params)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedResults, notes)
@@ -265,10 +265,10 @@ func TestGetNoteList(t *testing.T) {
 	t.Run("Success Get Zero Notes", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		mockNoteRepository.On("GetNoteList", ctx, filter).Return(nil, int64(0), nil).Once()
+		mockNoteRepository.On("GetNoteList", ctx, params).Return(nil, int64(0), nil).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		notes, total, err := testNoteUsecase.GetNoteList(ctx, filter)
+		notes, total, err := testNoteUsecase.GetNoteList(ctx, params)
 
 		assert.NoError(t, err)
 		assert.Empty(t, notes)
@@ -278,13 +278,13 @@ func TestGetNoteList(t *testing.T) {
 	t.Run("Failed Get Notes", func(t *testing.T) {
 		mockNoteRepository := mocks.NewNoteRepository(t)
 
-		filter := &entity.GetNoteListFilter{}
+		params := &entity.GetNoteListParams{}
 
 		errGetNotes := appErr.NewErrInternalServer("failed to get notes")
-		mockNoteRepository.On("GetNoteList", ctx, filter).Return(nil, int64(0), errGetNotes).Once()
+		mockNoteRepository.On("GetNoteList", ctx, params).Return(nil, int64(0), errGetNotes).Once()
 
 		testNoteUsecase := NewNoteUsecase(mockNoteRepository)
-		notes, total, err := testNoteUsecase.GetNoteList(ctx, filter)
+		notes, total, err := testNoteUsecase.GetNoteList(ctx, params)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, appErr.ErrInternalServer)

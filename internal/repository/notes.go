@@ -3,11 +3,13 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"notes-api/internal"
 	"notes-api/internal/entity"
 	appErr "notes-api/pkg/error"
 	"notes-api/pkg/utils"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -77,13 +79,27 @@ func (r *noteRepository) GetNote(ctx context.Context, noteID string) (*entity.No
 	return model.ToEntity(), nil
 }
 
-func (r *noteRepository) GetNoteList(ctx context.Context, filter *entity.GetNoteListFilter) ([]*entity.Note, int64, error) {
+func (r *noteRepository) GetNoteList(ctx context.Context, params *entity.GetNoteListParams) ([]*entity.Note, int64, error) {
 	var (
-		total int64
-		model = []*Note{}
+		total          int64
+		model          = []*Note{}
+		order          = "created_at DESC"
+		availableSorts = []string{"id", "title", "created_at", "updated_at"}
 	)
 
-	err := r.db.WithContext(ctx).Table("notes").Count(&total).Error
+	if params.Sort != "" {
+		validSort := utils.SortValidation(params.Sort, order, availableSorts)
+		order = utils.ToSqlSort(validSort)
+	}
+
+	query := r.db.WithContext(ctx).Table("notes")
+
+	if params.Search != "" {
+		keyword := fmt.Sprintf("%%%v%%", strings.ToLower(params.Search))
+		query.Where("LOWER(title) LIKE ? OR LOWER(content) LIKE ?", keyword, keyword)
+	}
+
+	err := query.Count(&total).Error
 	if err != nil {
 		slog.Error("error repository get note list count", "err", err)
 		return nil, total, appErr.NewErrInternalServer("failed to get notes")
@@ -93,7 +109,12 @@ func (r *noteRepository) GetNoteList(ctx context.Context, filter *entity.GetNote
 		return nil, total, nil
 	}
 
-	err = r.db.WithContext(ctx).Table("notes").Find(&model).Error
+	err = query.
+		Order(order).
+		Limit(params.Limit).
+		Offset(params.Offset).
+		Find(&model).Error
+
 	if err != nil {
 		slog.Error("error repository get note list data", "err", err)
 		return nil, total, appErr.NewErrInternalServer("failed to get notes")
