@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"notes-api/internal/entity"
@@ -145,7 +146,8 @@ func TestUpdateNote(t *testing.T) {
 			jsonPayload, _ := json.Marshal(tc.Payload)
 
 			rec := httptest.NewRecorder()
-			req, err := http.NewRequest("PUT", "/notes/{note_id}", bytes.NewReader(jsonPayload))
+			urlPath := fmt.Sprintf("/notes/%s", tc.NoteID)
+			req, err := http.NewRequest("PUT", urlPath, bytes.NewReader(jsonPayload))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -197,7 +199,8 @@ func TestDeleteNote(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
 			rec := httptest.NewRecorder()
-			req, err := http.NewRequest("DELETE", "/notes/{note_id}", nil)
+			urlPath := fmt.Sprintf("/notes/%s", tc.NoteID)
+			req, err := http.NewRequest("DELETE", urlPath, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -255,7 +258,8 @@ func TestGetNote(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
 			rec := httptest.NewRecorder()
-			req, err := http.NewRequest("DELETE", "/notes/{note_id}", nil)
+			urlPath := fmt.Sprintf("/notes/%s", tc.NoteID)
+			req, err := http.NewRequest("GET", urlPath, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
