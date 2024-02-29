@@ -111,7 +111,45 @@ func (h *handler) UpdateNote(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, resp.Set("success", note))
 }
 
-func (h *handler) DeleteNote(w http.ResponseWriter, r *http.Request) {}
+// DeleteNote
+// @Summary			Delete note.
+// @Description		Delete note.
+// @Tags			Notes
+// @Produce			json
+// @Param			note_id			path			string	 true	"Note ID" example(01HQSH92SNYQVCBDSD38XNBRYM)
+// @Success			200 			{object}		utils.Response
+// @Failure			400				{object}		utils.Response
+// @Failure			401				{object}		utils.Response
+// @Failure			422				{object}		utils.Response
+// @Failure			500				{object}		utils.Response
+// @Router	/notes/{note_id} [delete]
+func (h *handler) DeleteNote(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	resp := utils.NewResponse()
+
+	noteID := chi.URLParam(r, "note_id")
+	if noteID == "" {
+		render.Status(r, http.StatusNotFound)
+		render.JSON(w, r, resp.Set("note not found", nil))
+		return
+	}
+
+	err := h.usecase.DeleteNote(ctx, noteID)
+	if err != nil {
+		status, message := appErr.ErrStatusCode(err)
+
+		render.Status(r, status)
+		render.JSON(w, r, resp.Set(message, nil))
+		return
+	}
+
+	result := map[string]any{
+		"id": noteID,
+	}
+
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, resp.Set("success", result))
+}
 
 func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {}
 

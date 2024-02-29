@@ -149,3 +149,53 @@ func TestUpdateNote(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteNote(t *testing.T) {
+	noteID, _ := utils.ULID()
+
+	testCases := []struct {
+		Name               string
+		NoteID             string
+		MockError          error
+		ExpectedStatusCode int
+	}{
+		{
+			Name:               "Delete Note Success",
+			NoteID:             noteID,
+			ExpectedStatusCode: http.StatusOK,
+		},
+		{
+			Name:               "Delete Note Failed 404",
+			ExpectedStatusCode: http.StatusNotFound,
+		},
+		{
+			Name:               "Delete Note Failed 500",
+			NoteID:             noteID,
+			MockError:          appErr.NewErrInternalServer("failed to delete note"),
+			ExpectedStatusCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			rctx := chi.NewRouteContext()
+			rctx.URLParams.Add("note_id", tc.NoteID)
+
+			rec := httptest.NewRecorder()
+			req, err := http.NewRequest("DELETE", "/notes/{note_id}", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+			mockNoteUsecase := mocks.NewNoteUsecase(t)
+			if len(tc.NoteID) > 0 {
+				mockNoteUsecase.On("DeleteNote", req.Context(), noteID).Return(tc.MockError).Once()
+			}
+			testHandler := NewHandler(mockNoteUsecase)
+			testHandler.DeleteNote(rec, req)
+
+			assert.Equal(t, tc.ExpectedStatusCode, rec.Result().StatusCode)
+		})
+	}
+}

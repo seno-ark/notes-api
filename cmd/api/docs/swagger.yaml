@@ -83,6 +83,41 @@ paths:
       tags:
       - Notes
   /notes/{note_id}:
+    delete:
+      description: Delete note.
+      parameters:
+      - description: Note ID
+        example: 01HQSH92SNYQVCBDSD38XNBRYM
+        in: path
+        name: note_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Delete note.
+      tags:
+      - Notes
     put:
       consumes:
       - application/json
