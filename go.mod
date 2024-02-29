@@ -4,6 +4,7 @@ go 1.21.5
 
 require (
 	github.com/go-chi/chi/v5 v5.0.12
+	github.com/go-chi/render v1.0.3
 	github.com/go-playground/validator/v10 v10.18.0
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/spf13/viper v1.18.2
@@ -13,6 +14,7 @@ require (
 )
 
 require (
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
