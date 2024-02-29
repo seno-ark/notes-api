@@ -3,6 +3,7 @@ module notes-api
 go 1.21.5
 
 require (
+	github.com/go-chi/chi/v5 v5.0.12
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
