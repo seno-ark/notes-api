@@ -194,7 +194,7 @@ func (h *handler) GetNote(w http.ResponseWriter, r *http.Request) {
 // @Produce			json
 // @Param			page			query			int	     false	"Pagination page number (default 1, max 500)"				example(1)
 // @Param			count			query			int	     false	"Pagination data limit  (default 10, max 100)"				example(10)
-// @Param			sort			query			string	 false	"Data sorting (available fields: id, title, created_at, updated_at). For descending order use prefix "-"	example(-created_at)
+// @Param			sort			query			string	 false	"Data sorting (value: id/title/created_at/updated_at). For desc order, use prefix '-'"	example(-created_at)
 // @Param			search			query			string	 false	"Keyword for searching note by title or content" 			example(to do list)
 // @Success			200 			{object}		utils.Response
 // @Failure			400				{object}		utils.Response

@@ -58,8 +58,8 @@ paths:
         in: query
         name: count
         type: integer
-      - description: 'Data sorting (available fields: id, title, created_at, updated_at).
-          For descending order use prefix '
+      - description: 'Data sorting (value: id/title/created_at/updated_at). For desc
+          order, use prefix ''-'''
         example: -created_at
         in: query
         name: sort
