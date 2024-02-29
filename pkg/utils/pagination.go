@@ -19,13 +19,13 @@ func Pagination(pageStr, countStr string) (page, count int) {
 		count, _ = strconv.Atoi(countStr)
 	}
 
-	if page == 0 {
+	if page < 1 {
 		page = 1
 	} else if page > MAX_PAGINATION_PAGE {
 		page = MAX_PAGINATION_PAGE
 	}
 
-	if count == 0 {
+	if count < 1 {
 		count = DEFAULT_PAGINATION_COUNT
 	} else if count > MAX_PAGINATION_COUNT {
 		count = MAX_PAGINATION_COUNT
