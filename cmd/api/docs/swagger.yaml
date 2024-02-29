@@ -1,0 +1,85 @@
+basePath: /
+definitions:
+  entity.CreateUpdateNotePayload:
+    properties:
+      content:
+        example: 1. Nothing.
+        maxLength: 1000
+        minLength: 1
+        type: string
+      title:
+        example: To Do list
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - content
+    - title
+    type: object
+  utils.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+      meta:
+        $ref: '#/definitions/utils.ResponseMeta'
+      validation_errors:
+        items:
+          type: string
+        type: array
+    type: object
+  utils.ResponseMeta:
+    properties:
+      count:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+host: localhost:9000
+info:
+  contact: {}
+  description: This is a simple notes api server
+  title: Simple Notes API
+  version: "1.0"
+paths:
+  /notes:
+    post:
+      consumes:
+      - application/json
+      description: Create new Note.
+      parameters:
+      - description: note data
+        in: body
+        name: note
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateUpdateNotePayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Create Note.
+      tags:
+      - Notes
+swagger: "2.0"

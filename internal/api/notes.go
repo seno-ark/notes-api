@@ -10,12 +10,25 @@ import (
 	"github.com/go-chi/render"
 )
 
+// CreateNote
+// @Summary			Create Note.
+// @Description		Create new Note.
+// @Tags			Notes
+// @Accept			json
+// @Produce			json
+// @Param 			note	body	entity.CreateUpdateNotePayload	true	"note data"
+// @Success			201		{object}	utils.Response
+// @Failure			400		{object}	utils.Response
+// @Failure			401		{object}	utils.Response
+// @Failure			422		{object}	utils.Response
+// @Failure			500		{object}	utils.Response
+// @Router	/notes [post]
 func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	resp := utils.NewResponse()
 
-	payload := new(entity.Note)
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	payload := new(entity.CreateUpdateNotePayload)
+	err := json.NewDecoder(r.Body).Decode(payload)
 	if err != nil {
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, resp.Set("invalid data", nil))
@@ -30,7 +43,7 @@ func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book, err := h.usecase.CreateNote(ctx, payload)
+	note, err := h.usecase.CreateNote(ctx, payload)
 	if err != nil {
 		status, message := appErr.ErrStatusCode(err)
 
@@ -40,7 +53,7 @@ func (h *handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Status(r, http.StatusCreated)
-	render.JSON(w, r, resp.Set("success", book))
+	render.JSON(w, r, resp.Set("success", note))
 }
 
 func (h *handler) UpdateNote(w http.ResponseWriter, r *http.Request) {}

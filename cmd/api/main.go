@@ -13,8 +13,18 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	_ "notes-api/cmd/api/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
+// @title Simple Notes API
+// @version 1.0
+// @description This is a simple notes api server
+
+// @host localhost:9000
+// @BasePath /
 func main() {
 	conf := config.GetConfig("./")
 
@@ -33,6 +43,8 @@ func main() {
 	r.Use(middleware.Timeout(time.Second * 60))
 
 	api.Routes(r, handler)
+
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	slog.Info("start http server", slog.Any("port", conf.Port))
 	err = http.ListenAndServe(fmt.Sprintf(":%s", conf.Port), r)
