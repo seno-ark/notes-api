@@ -4,6 +4,9 @@ include .env
 go-dev:
 	go run cmd/api/main.go
 
+go-lint:
+	revive -config revive.toml -formatter friendly ./...
+
 go-test:
 	go test -v -cover ./...
 
@@ -25,4 +28,4 @@ migrate-up:
 migrate-down:
 	migrate -path pkg/database/migration -database "postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable" -verbose down
 
-.PHONY: go-build go-dev go-test go-mock migrate-file migrate-up migrate-down
+.PHONY: go-dev go-lint go-test go-mock go-swag go-build migrate-file migrate-up migrate-down
